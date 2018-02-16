@@ -5,6 +5,7 @@ const TagsService = require('../../services/tags');
 const CommentsService = require('../../services/comments');
 const KarmaService = require('../../services/karma');
 const merge = require('lodash/merge');
+const sanitizeHtml = require('sanitize-html');
 
 const {
   CREATE_COMMENT,
@@ -192,6 +193,40 @@ const createComment = async (
  */
 const createPublicComment = async (ctx, comment) => {
   const { connectors: { services: { Moderation } } } = ctx;
+
+  // Sanitize the comment to only include allowed tags, if rich text is enabled.
+  // TODO - Add configuration to enable/disable rich text and choose an editor for it - MEA
+  // TODO - Add configuration for allowed tags.  Using Drupal 8 comment format allowed tags for now. - MEA
+  comment.body = sanitizeHtml(comment.body, {
+    allowedTags: [
+      'a',
+      'br',
+      'em',
+      'strong',
+      'cite',
+      'blockquote',
+      'code',
+      'ul',
+      'ol',
+      'li',
+      'dl',
+      'dt',
+      'dd',
+      'u',
+      'sup',
+      'sub',
+      'p',
+    ],
+    allowedAttributes: {
+      a: ['href'],
+      blockquote: ['cite'],
+      ul: ['type'],
+      ol: ['start', 'type'],
+    },
+  });
+
+  // Replace newlines with line break elements
+  // comment.body = comment.body.replace(/(?:\r\n|\r|\n)/g, '<br />');
 
   // We then take the wordlist and the comment into consideration when
   // considering what status to assign the new comment, and resolve the new

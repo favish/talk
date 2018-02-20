@@ -40,6 +40,20 @@ export default class DraftArea extends React.Component {
   // TODO - put CKEditor functionality in a sub-component
   handleCKEditorLoad = () => {
     this.editorInstance = this.ckeditor.editorInstance;
+    // Move the CKEditor dialog windows to the top of the iframe instead of vertical center
+    window.CKEDITOR.on('dialogDefinition', event => {
+      let definition = event.data.definition;
+      if (event.data.name === 'link') {
+        // Moving the link dialog exposes the 'Select an Anchor' and Email options, remove them.
+        definition.contents[0].elements = definition.contents[0].elements.filter(element => {
+          let blacklist = ['anchorOptions', 'emailOptions'];
+          return blacklist.indexOf(element.id) === -1;
+        });
+      }
+      definition.onShow = function () {
+        this.move(this.getPosition().x, 35)
+      }
+    });
     if (this.props.focusInputOnLoad) {
       this.editorInstance.focus();
     }

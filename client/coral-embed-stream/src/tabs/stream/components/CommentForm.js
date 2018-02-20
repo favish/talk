@@ -50,6 +50,7 @@ export class CommentForm extends React.Component {
     onCancel: PropTypes.func,
     state: PropTypes.string,
     loadingState: PropTypes.oneOf(['', 'loading', 'success', 'error']),
+    focusInputOnLoad: PropTypes.bool,
   };
   static get defaultProps() {
     return {
@@ -112,6 +113,7 @@ export class CommentForm extends React.Component {
           disabled={disableTextArea}
           charCountEnable={this.props.charCountEnable}
           maxCharCount={this.props.maxCharCount}
+          focusInputOnLoad={this.props.focusInputOnLoad}
         />
         <div className={`${name}-button-container`}>
           {this.props.buttonContainerStart}

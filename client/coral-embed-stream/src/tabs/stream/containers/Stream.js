@@ -176,6 +176,13 @@ class StreamContainer extends React.Component {
     return sortBy === 'CREATED_AT' && sortOrder === 'DESC';
   }
 
+  getChildContext() {
+    return {
+      wysiwygEditor: 'ckeditor',
+      customCssUrl: this.props.root.settings.customCssUrl,
+    };
+  }
+
   componentDidMount() {
     if (this.props.previousTab) {
       this.props.data.refetch();
@@ -282,6 +289,11 @@ StreamContainer.propTypes = {
   previousTab: PropTypes.string,
 };
 
+StreamContainer.childContextTypes = {
+  wysiwygEditor: PropTypes.string,
+  customCssUrl: PropTypes.string,
+};
+
 const commentFragment = gql`
   fragment CoralEmbedStream_Stream_comment on Comment {
     id
@@ -385,6 +397,7 @@ const fragments = {
       }
       settings {
         organizationName
+        customCssUrl
       }
       ${getSlotFragmentSpreads(slots, 'root')}
       ...${getDefinitionName(Comment.fragments.root)}

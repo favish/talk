@@ -50,6 +50,9 @@ export default class DraftAreaContainer extends React.Component {
         charCountEnable={this.props.charCountEnable}
         maxCharCount={this.props.maxCharCount}
         label={this.props.label}
+        customCssUrl={this.context.customCssUrl}
+        wysiwygEditor={this.context.wysiwygEditor}
+        focusInputOnLoad={this.props.focusInputOnLoad}
       />
     );
   }
@@ -59,6 +62,8 @@ DraftAreaContainer.contextTypes = {
   // We use pymSessionStorage instead to persist the data directly on the parent page,
   // in order to mitigate strict cross domain security settings.
   pymSessionStorage: PropTypes.object,
+  customCssUrl: PropTypes.string,
+  wysiwygEditor: PropTypes.string,
 };
 
 DraftAreaContainer.propTypes = {
@@ -71,4 +76,5 @@ DraftAreaContainer.propTypes = {
   disabled: PropTypes.bool,
   rows: PropTypes.number,
   label: PropTypes.string.isRequired,
+  focusInputOnLoad: PropTypes.bool,
 };

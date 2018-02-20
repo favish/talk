@@ -165,6 +165,7 @@ class CommentBox extends React.Component {
           bodyPlaceholder={t('comment.comment')}
           bodyInputId={id}
           body={this.state.body}
+          focusInputOnLoad={this.props.focusInputOnLoad}
           buttonContainerStart={
             <Slot
               fill="commentInputDetailArea"
@@ -199,6 +200,7 @@ CommentBox.propTypes = {
   canPost: PropTypes.bool,
   notify: PropTypes.func.isRequired,
   tags: PropTypes.array,
+  focusInputOnLoad: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({

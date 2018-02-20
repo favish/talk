@@ -6,11 +6,6 @@ import CommentBox from '../containers/CommentBox';
 const name = 'talk-plugin-replies';
 
 class ReplyBox extends Component {
-  componentDidMount() {
-    // TODO: (kiwi) This does not follow best practices, better to move this logic into the component.
-    document.getElementById(`comment-draft_${this.props.parentId}`).focus();
-  }
-
   cancelReply = () => {
     this.props.setActiveReplyBox('');
   };
@@ -40,6 +35,7 @@ class ReplyBox extends Component {
           assetId={assetId}
           postComment={postComment}
           isReply={true}
+          focusInputOnLoad={true}
         />
       </div>
     );

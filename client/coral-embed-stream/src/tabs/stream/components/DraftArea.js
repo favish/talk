@@ -11,12 +11,16 @@ import CKEditor from 'react-ckeditor-component';
  * An enhanced textarea to make comment drafts.
  */
 export default class DraftArea extends React.Component {
-
   constructor(props) {
     super(props);
-    if (props.editorCssUrl) {
-      props.editorConfig.contentsCss = [props.editorCssUrl];
+    if (props.customCssUrl) {
+      props.editorConfig.contentsCss = [props.customCssUrl];
     }
+    this.state = {
+      value: '',
+    };
+    this.ckeditor = null;
+    this.editorInstance = null;
   }
 
   renderCharCount() {
@@ -31,6 +35,26 @@ export default class DraftArea extends React.Component {
         {remaining} {t('comment_box.characters_remaining')}
       </div>
     );
+  }
+
+  // TODO - put CKEditor functionality in a sub-component
+  handleCKEditorLoad = () => {
+    this.editorInstance = this.ckeditor.editorInstance;
+    if (this.props.focusInputOnLoad) {
+      this.editorInstance.focus();
+    }
+  };
+
+  // Manage editor value in state to update ckeditor
+  componentWillReceiveProps(nextProps) {
+    // If props update and are not synced to CKEditor, update CKEditor to match props
+    if (
+      this.props.value !== nextProps.value &&
+      this.editorInstance &&
+      this.editorInstance.getData() !== nextProps.value
+    ) {
+      this.editorInstance.setData(nextProps.value);
+    }
   }
 
   onChange = e => {
@@ -65,11 +89,15 @@ export default class DraftArea extends React.Component {
               ...editorConfig,
               readOnly: disabled,
             }}
+            ref={ckeditor => {
+              this.ckeditor = ckeditor;
+            }}
             content={value}
             placeholder={placeholder}
             id={id}
             events={{
               change: this.onChange,
+              instanceReady: this.handleCKEditorLoad,
             }}
             rows={rows}
             disabled={disabled}
@@ -127,7 +155,7 @@ DraftArea.defaultProps = {
     title: 'Rich Text Editor, Comment field',
     contentsLangDirection: 'ltr',
     contentsCss: [],
-  }
+  },
 };
 
 DraftArea.propTypes = {
@@ -140,4 +168,7 @@ DraftArea.propTypes = {
   onChange: PropTypes.func,
   disabled: PropTypes.bool,
   rows: PropTypes.number,
+  customCssUrl: PropTypes.string,
+  editor: PropTypes.string,
+  focusInputOnLoad: PropTypes.bool,
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { matchLinks } from '../utils';
 import memoize from 'lodash/memoize';
-
+import DOMPurify from 'dompurify';
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
@@ -70,32 +70,12 @@ const CommentFormatter = ({
   className = 'comment',
   ...rest
 }) => {
-  // Breaking the body by line break
-  const textbreaks = body.split('\n');
 
   return (
-    <span className={`${className}-text`} {...rest}>
-      {textbreaks.map((line, i) => {
-        const content = markLinks(line).map((element, index) => {
-          // Keep highlighted links.
-          if (typeof element !== 'string') {
-            return element;
-          }
-
-          // Highlight suspect and banned phrase inside this part of text.
-          return markPhrases(element, suspectWords, bannedWords, index);
-        });
-
-        return (
-          <span key={i} className={`${className}-line`}>
-            {content}
-            {i !== textbreaks.length - 1 && (
-              <br className={`${className}-linebreak`} />
-            )}
-          </span>
-        );
-      })}
-    </span>
+    <span className={`${className}-text`} {...rest}
+      dangerouslySetInnerHTML={{
+        __html: DOMPurify.sanitize(body)
+      }} />
   );
 };
 
